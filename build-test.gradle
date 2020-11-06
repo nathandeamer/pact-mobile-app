@@ -1,0 +1,7 @@
+test {
+    exclude '**/*Pact*'
+}
+
+task pactConsumer(type: Test, description: 'Run the pact consumer tests', group: 'Verification') {
+    include '**/*ConsumerPact*'
+}

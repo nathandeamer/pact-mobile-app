@@ -1,0 +1,6 @@
+application:
+  customerDetailsUrl: http://localhost:8082/customerdetails
+pactbroker:
+  host: nathandeamer.pact.dius.com.au
+  scheme: https
+  token: ${NATHAN_PACT_BROKER_TOKEN}
