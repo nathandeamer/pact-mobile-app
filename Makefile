@@ -1,21 +1,15 @@
+SHELL:=/bin/bash
+
+GITHUB_COMMIT_HASH?=$(shell git rev-parse --verify HEAD)
+
+ENV?=dev
+
 compile:
 	./gradlew clean build
 
-pact-consumer-pr:
+pact-consumer:
 	./gradlew pactConsumer
-
-
+	pact-broker publish build/pacts --consumer-app-version=${GITHUB_COMMIT_HASH} --broker-base-url=${ND_PACT_BROKER_URL} --broker-token=${ND_PACT_BROKER_TOKEN}
 
 pact-can-i-deploy:
-
-
-
-pact-provider:
-	./gradlew $$GRADLE_PROXY pactProvider
-
-pact-consumer-publish:
-	./gradlew $$GRADLE_PROXY pactConsumer
-	./gradlew $$GRADLE_PROXY pactConsumerPublish
-
-pact-provider-publish:
-	./gradlew $$GRADLE_PROXY pactProviderPublishResult
+	pact-broker can-i-deploy --pacticipant mobileapp --version ${GITHUB_COMMIT_HASH} --broker-base-url=${ND_PACT_BROKER_URL} --broker-token=${ND_PACT_BROKER_TOKEN} --to ${ENV}

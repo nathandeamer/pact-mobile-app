@@ -71,25 +71,25 @@ public class CustomerDetailsClientConsumerPactTest {
   }
 
 
-  @Pact(consumer=CONSUMER_NAME)
-  public RequestResponsePact getCustomerDetailsByIdDoesNotExist(PactDslWithProvider builder) {
-    return builder
-        .given("A customer does not exists")
-        .uponReceiving("A request to get customer details by id")
-        .path("/customerdetails/" + CUSTOMER_ID)
-        .method("GET")
-        .willRespondWith()
-        .status(404)
-        .toPact();
-  }
-
-  @Test
-  @PactVerification(fragment = "getCustomerDetailsByIdDoesNotExist")
-  public void shouldGetCustomerDetailsByIdDoesNotExist() {
-    assertThatThrownBy(() -> {
-      customerDetailsClient.getCustomer(CUSTOMER_ID);
-    }).isInstanceOf(FeignException.class)
-        .hasFieldOrPropertyWithValue("status", 404);
-  }
+//  @Pact(consumer=CONSUMER_NAME)
+//  public RequestResponsePact getCustomerDetailsByIdDoesNotExist(PactDslWithProvider builder) {
+//    return builder
+//        .given("A customer does not exists")
+//        .uponReceiving("A request to get customer details by id")
+//        .path("/customerdetails/" + CUSTOMER_ID)
+//        .method("GET")
+//        .willRespondWith()
+//        .status(404)
+//        .toPact();
+//  }
+//
+//  @Test
+//  @PactVerification(fragment = "getCustomerDetailsByIdDoesNotExist")
+//  public void shouldGetCustomerDetailsByIdDoesNotExist() {
+//    assertThatThrownBy(() -> {
+//      customerDetailsClient.getCustomer(CUSTOMER_ID);
+//    }).isInstanceOf(FeignException.class)
+//        .hasFieldOrPropertyWithValue("status", 404);
+//  }
 
 }
