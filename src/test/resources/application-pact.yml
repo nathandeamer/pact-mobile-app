@@ -3,4 +3,4 @@ application:
 pactbroker:
   host: nathandeamer.pact.dius.com.au
   scheme: https
-  token: ${NATHAN_PACT_BROKER_TOKEN}
+  token: ${ND_PACT_BROKER_TOKEN}
