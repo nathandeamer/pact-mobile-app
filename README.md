@@ -1,9 +1,9 @@
+Set up:
+1. Install the pact cli
+2. Get a pactflow account
+3. Set environment variables: ND_PACT_BROKER_URL and ND_PACT_BROKER_TOKEN
+
 Steps:
-1. make compile (Runs all code and unit tests)
-2. make pact-consumer (Runs and publishes pacts)
-3. make ENV=dev pact-can-i-deploy (Checks if the contract is met by a provider)
-
-
-
-4. ./gradlew clean pactProvider
-5.  ./gradlew -Dpact.verifier.publishResults=true -Dpact.provider.version=1.2 -Dpact.provider.tag=dev clean pactProvider 
+1. make compile
+2. make pact-consumer - Runs the pact consumer tests and publishes the contract to the broker
+3. make ENV=dev pact-can-i-deploy - Checks if the provider has verified the contract on dev. 
