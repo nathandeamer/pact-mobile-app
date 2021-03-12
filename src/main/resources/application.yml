@@ -1,2 +1,2 @@
 application:
-  customerDetailsUrl: http://localhost:8081/customerdetails
+  ordersUrl: http://localhost:8081/orders
