@@ -1,6 +1,0 @@
-application:
-  ordersUrl: http://localhost:8082/orders
-pactbroker:
-  host: ${ND_PACT_BROKER_URL}
-  scheme: https
-  token: ${ND_PACT_BROKER_TOKEN}
