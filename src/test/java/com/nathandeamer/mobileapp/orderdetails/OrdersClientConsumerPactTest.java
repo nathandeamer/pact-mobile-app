@@ -1,40 +1,34 @@
 package com.nathandeamer.mobileapp.orderdetails;
 
-import static au.com.dius.pact.consumer.ConsumerPactBuilder.jsonBody;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
-
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
-import au.com.dius.pact.consumer.junit.PactProviderRule;
-import au.com.dius.pact.consumer.junit.PactVerification;
+import au.com.dius.pact.consumer.junit5.PactConsumerTestExt;
+import au.com.dius.pact.consumer.junit5.PactTestFor;
 import au.com.dius.pact.core.model.RequestResponsePact;
 import au.com.dius.pact.core.model.annotations.Pact;
 import com.google.common.collect.ImmutableList;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@RunWith(SpringRunner.class)
-@ActiveProfiles("pact")
-@SpringBootTest(webEnvironment = RANDOM_PORT)
+import static au.com.dius.pact.consumer.ConsumerPactBuilder.jsonBody;
+import static org.assertj.core.api.Assertions.assertThat;
+
+@ExtendWith(PactConsumerTestExt.class)
+@ExtendWith(SpringExtension.class)
+@PactTestFor(providerName = "orders", port = "8888")
+@SpringBootTest({
+        "application.ordersUrl: localhost:8888/orders"
+})
 public class OrdersClientConsumerPactTest {
 
-  private static final String PROVIDER_NAME = "orders";
   private static final String CONSUMER_NAME = "mobileapp";
 
   private static final int ORDER_ID = 1234;
   private static final String DESCRIPTION = "New York City Pass";
   private static final int QUANTITY = 1;
   private static final String SKU = "NYC";
-
-  @Rule
-  public PactProviderRule mockProvider =
-      new PactProviderRule(PROVIDER_NAME, "localhost", 8082, this);
 
   @Autowired
   private OrdersClient ordersClient;
@@ -59,8 +53,8 @@ public class OrdersClientConsumerPactTest {
         ).toPact();
   }
 
+  @PactTestFor(pactMethod = "getOrderById")
   @Test
-  @PactVerification(fragment = "getOrderById")
   public void shouldGetOrderById() {
     OrdersResponse result = ordersClient.getOrder(ORDER_ID);
     assertThat(result)

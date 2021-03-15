@@ -2,6 +2,7 @@ plugins {
 	id 'org.springframework.boot' version '2.3.4.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
 	id 'java'
+	id "au.com.dius.pact" version "4.1.0"
 }
 
 group = 'com.nathandeamer'
@@ -27,13 +28,9 @@ dependencies {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
 
-	testImplementation 'junit:junit:4.13'
-	testImplementation 'au.com.dius:pact-jvm-consumer-java8:4.0.10'
-	testImplementation 'au.com.dius:pact-jvm-consumer-junit:4.0.10'
+	testCompile 'au.com.dius:pact-jvm-consumer-junit5:4.0.10'
 }
 
 test {
 	useJUnitPlatform()
 }
-
-apply from: 'build-test.gradle'
