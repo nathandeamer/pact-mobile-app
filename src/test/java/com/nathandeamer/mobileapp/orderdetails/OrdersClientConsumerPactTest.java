@@ -49,6 +49,7 @@ public class OrdersClientConsumerPactTest {
                     .stringType("description", DESCRIPTION)
                     .integerType("qty", QUANTITY)
                     .stringType("sku", SKU)
+                    .stringType("newField", "HELLO")
               .closeArray()
         ).toPact();
   }
@@ -65,6 +66,7 @@ public class OrdersClientConsumerPactTest {
                         .description(DESCRIPTION)
                         .qty(QUANTITY)
                         .sku(SKU)
+                        .newField("HELLO")
                         .build()))
                 .build());
   }

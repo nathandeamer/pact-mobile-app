@@ -21,6 +21,7 @@ public class OrdersResponse {
     private String sku;
     private String description;
     private int qty;
+    private String newField;
   }
 
 }
