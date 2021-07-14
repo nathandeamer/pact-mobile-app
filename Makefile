@@ -1,6 +1,6 @@
 SHELL:=/bin/bash
 
-GITHUB_COMMIT_HASH?=$(shell git rev-parse --verify HEAD)
+GITHUB_COMMIT_HASH?=$(shell git rev-parse --short HEAD)
 
 ENV?=dev
 
