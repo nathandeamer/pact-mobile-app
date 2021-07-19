@@ -1,13 +1,17 @@
 plugins {
-	id 'org.springframework.boot' version '2.3.4.RELEASE'
-	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+	id 'org.springframework.boot' version '2.4.3'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
-	id "au.com.dius.pact" version "4.1.0"
+	id 'au.com.dius.pact' version '4.2.7'
 }
 
 group = 'com.nathandeamer'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_11
+	targetCompatibility = JavaVersion.VERSION_11
+}
 
 configurations {
 	compileOnly {
@@ -28,7 +32,7 @@ dependencies {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
 
-	testCompile 'au.com.dius:pact-jvm-consumer-junit5:4.0.10'
+	testImplementation 'au.com.dius.pact.consumer:junit5:4.2.7'
 }
 
 test {

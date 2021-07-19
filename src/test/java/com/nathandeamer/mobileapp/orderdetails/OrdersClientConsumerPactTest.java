@@ -1,5 +1,6 @@
 package com.nathandeamer.mobileapp.orderdetails;
 
+import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
 import au.com.dius.pact.consumer.junit5.PactConsumerTestExt;
 import au.com.dius.pact.consumer.junit5.PactTestFor;
@@ -12,7 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static au.com.dius.pact.consumer.ConsumerPactBuilder.jsonBody;
+import java.util.Objects;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(PactConsumerTestExt.class)
@@ -42,14 +44,13 @@ public class OrdersClientConsumerPactTest {
         .method("GET")
         .willRespondWith()
         .status(200)
-        .body(
-            jsonBody()
-              .integerType("id", ORDER_ID)
-              .minArrayLike("items", 1)
-                    .stringType("description", DESCRIPTION)
-                    .integerType("qty", QUANTITY)
-                    .stringType("sku", SKU)
-              .closeArray()
+        .body(Objects.requireNonNull(new PactDslJsonBody()
+                .integerType("id", ORDER_ID)
+                .minArrayLike("items", 1)
+                .stringType("description", DESCRIPTION)
+                .integerType("qty", QUANTITY)
+                .stringType("sku", SKU)
+                .closeArray())
         ).toPact();
   }
 
