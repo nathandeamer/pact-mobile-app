@@ -78,6 +78,25 @@ docker run --rm \
 
 ![Pact Record Deployment](pact-record-deployment.png "Pact Record Deployment")
 
+### Record a release
+When a version has been deployed to production we should record a release.
+1. gradle: At time of writing the pact gradle plugin does not support recording a deployment
+2. pact-cli: `pact-broker record-release --pacticipant=mobileapp --version=$(git rev-parse --short HEAD) --environment=prod`
+3. docker:
+```
+docker run --rm \
+        -e PACT_BROKER_BASE_URL \
+        -e PACT_BROKER_TOKEN \
+        pactfoundation/pact-cli:latest \
+        broker record_release \
+        --pacticipant=mobileapp \
+        --version=$(git rev-parse --short HEAD) \
+        --environment=prod
+```
+
+![Pact Record Release](pact-record-release.png "Pact Record Release")
+
+
 ## Generate network graph:
 
 1. Install graphviz (`brew install graphviz`)
