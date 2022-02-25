@@ -44,7 +44,7 @@ docker run --rm \
 Choose one of the following options:
 1. gradle: At time of writing the pact gradle canIDeploy task does not support environments.
 
-2. pact-cli: `pact-broker can-i-deploy --pacticipant=mobileapp --version=$(git rev-parse HEAD) --branch=$(git rev-parse --abbrev-ref HEAD) --to-environment=dev`
+2. pact-cli: `pact-broker can-i-deploy --pacticipant=pact-mobile-app --version=$(git rev-parse HEAD) --branch=$(git rev-parse --abbrev-ref HEAD) --to-environment=dev`
 
 3. docker: 
 ```
@@ -53,7 +53,7 @@ docker run --rm \
         -e PACT_BROKER_TOKEN \
         pactfoundation/pact-cli:latest \
         broker can-i-deploy \
-        --pacticipant=mobileapp \
+        --pacticipant=pact-mobile-app \
         --version=$(git rev-parse HEAD) \
         --branch=$(git rev-parse --abbrev-ref HEAD) \
         --to-environment=dev
@@ -67,7 +67,7 @@ After `can-i-deploy` has passed and the service has been deployed to an environm
 
 Choose one of the following options:
 1. gradle: At time of writing the pact gradle plugin does not support recording a deployment
-2. pact-cli: `pact-broker record-deployment --pacticipant=mobileapp --version=$(git rev-parse HEAD) --environment=dev`
+2. pact-cli: `pact-broker record-deployment --pacticipant=pact-mobile-app --version=$(git rev-parse HEAD) --environment=dev`
 3. docker: 
 ```
 docker run --rm \
@@ -75,7 +75,7 @@ docker run --rm \
         -e PACT_BROKER_TOKEN \
         pactfoundation/pact-cli:latest \
         broker record_deployment \
-        --pacticipant=mobileapp \
+        --pacticipant=pact-mobile-app \
         --version=$(git rev-parse HEAD) \
         --environment=dev
 ```
@@ -85,7 +85,7 @@ docker run --rm \
 ### Record a release
 When a version has been deployed to production we should record a release.
 1. gradle: At time of writing the pact gradle plugin does not support recording a deployment
-2. pact-cli: `pact-broker record-release --pacticipant=mobileapp --version=$(git rev-parse HEAD) --environment=prod`
+2. pact-cli: `pact-broker record-release --pacticipant=pact-mobile-app --version=$(git rev-parse HEAD) --environment=prod`
 3. docker:
 ```
 docker run --rm \
@@ -93,7 +93,7 @@ docker run --rm \
         -e PACT_BROKER_TOKEN \
         pactfoundation/pact-cli:latest \
         broker record_release \
-        --pacticipant=mobileapp \
+        --pacticipant=pact-mobile-app \
         --version=$(git rev-parse HEAD) \
         --environment=prod
 ```

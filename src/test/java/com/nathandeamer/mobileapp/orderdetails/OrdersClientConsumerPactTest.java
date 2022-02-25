@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 })
 public class OrdersClientConsumerPactTest {
 
-    private static final String CONSUMER_NAME = "mobileapp";
+    private static final String CONSUMER_NAME = "pact-mobile-app";
 
     private static final int ORDER_ID = 1234;
     private static final String DESCRIPTION = "New York City Pass";
