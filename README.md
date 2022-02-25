@@ -60,7 +60,7 @@ docker run --rm \
 ```
 ** Remember to replace the `--to-environment` with the environment you want to check if you can deploy too.
 
-To get can-i-deploy to pass you'll need to follow the provider steps in [pact-orders](https://github.com/nathandeamer/pact-order)
+To get can-i-deploy to pass you'll need to follow the provider steps in [pact-order](https://github.com/nathandeamer/pact-order)
 
 ### Record a deployment
 After `can-i-deploy` has passed and the service has been deployed to an environment we should [record a deployment](https://docs.pact.io/pact_broker/recording_deployments_and_releases)
