@@ -42,7 +42,7 @@ tasks.named('test') {
 def getGitHash = { ->
 	def stdout = new ByteArrayOutputStream()
 	exec {
-		commandLine 'git', 'rev-parse', '--short', 'HEAD'
+		commandLine 'git', 'rev-parse', 'HEAD'
 		standardOutput = stdout
 	}
 	return stdout.toString().trim()

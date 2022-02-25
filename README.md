@@ -1,5 +1,9 @@
 # PACT Consumer example
- 
+
+# TODO 
+- Badges (Do you need to use `--tag-with-git-branch`?)
+- Github webhooks (What permissions does your token need)
+
 ### Setup:
 1. Get (and set) your PACT environment variables by clicking 'Copy Env Vars' for [Read/write token (CI)](https://[user].pactflow.io/settings/api-tokens).  
 (used in pact section of [build.gradle](build.gradle))
@@ -20,7 +24,7 @@ See generated contracts in [build/pacts](build/pacts)
 Choose one of the following options:
 1. gradle: `./gradlew pactPublish`  
 This will publish the consumer pacts to pactflow with version: `<git sha>` and branch: `<branch name>` (See pact section in [build.gradle](build.gradle)))
-2. pact-cli: `pact-broker publish build/pacts --consumer-app-version=$(git rev-parse --short HEAD) --branch=$(git rev-parse --abbrev-ref HEAD)`
+2. pact-cli: `pact-broker publish build/pacts --consumer-app-version=$(git rev-parse HEAD) --branch=$(git rev-parse --abbrev-ref HEAD)`
 3. docker: 
 ```
 docker run --rm \
@@ -32,7 +36,7 @@ docker run --rm \
   pactfoundation/pact-cli:latest \
   publish \
   ${PWD}/build/pacts \
-  --consumer-app-version=$(git rev-parse --short HEAD) \
+  --consumer-app-version=$(git rev-parse HEAD) \
   --branch=$(git rev-parse --abbrev-ref HEAD)
 ```
 
@@ -40,7 +44,7 @@ docker run --rm \
 Choose one of the following options:
 1. gradle: At time of writing the pact gradle canIDeploy task does not support environments.
 
-2. pact-cli: `pact-broker can-i-deploy --pacticipant=mobileapp --version=$(git rev-parse --short HEAD) --branch=$(git rev-parse --abbrev-ref HEAD) --to-environment=dev`
+2. pact-cli: `pact-broker can-i-deploy --pacticipant=mobileapp --version=$(git rev-parse HEAD) --branch=$(git rev-parse --abbrev-ref HEAD) --to-environment=dev`
 
 3. docker: 
 ```
@@ -50,7 +54,7 @@ docker run --rm \
         pactfoundation/pact-cli:latest \
         broker can-i-deploy \
         --pacticipant=mobileapp \
-        --version=$(git rev-parse --short HEAD) \
+        --version=$(git rev-parse HEAD) \
         --branch=$(git rev-parse --abbrev-ref HEAD) \
         --to-environment=dev
 ```
@@ -63,7 +67,7 @@ After `can-i-deploy` has passed and the service has been deployed to an environm
 
 Choose one of the following options:
 1. gradle: At time of writing the pact gradle plugin does not support recording a deployment
-2. pact-cli: `pact-broker record-deployment --pacticipant=mobileapp --version=$(git rev-parse --short HEAD) --environment=dev`
+2. pact-cli: `pact-broker record-deployment --pacticipant=mobileapp --version=$(git rev-parse HEAD) --environment=dev`
 3. docker: 
 ```
 docker run --rm \
@@ -72,7 +76,7 @@ docker run --rm \
         pactfoundation/pact-cli:latest \
         broker record_deployment \
         --pacticipant=mobileapp \
-        --version=$(git rev-parse --short HEAD) \
+        --version=$(git rev-parse HEAD) \
         --environment=dev
 ```
 
@@ -81,7 +85,7 @@ docker run --rm \
 ### Record a release
 When a version has been deployed to production we should record a release.
 1. gradle: At time of writing the pact gradle plugin does not support recording a deployment
-2. pact-cli: `pact-broker record-release --pacticipant=mobileapp --version=$(git rev-parse --short HEAD) --environment=prod`
+2. pact-cli: `pact-broker record-release --pacticipant=mobileapp --version=$(git rev-parse HEAD) --environment=prod`
 3. docker:
 ```
 docker run --rm \
@@ -90,7 +94,7 @@ docker run --rm \
         pactfoundation/pact-cli:latest \
         broker record_release \
         --pacticipant=mobileapp \
-        --version=$(git rev-parse --short HEAD) \
+        --version=$(git rev-parse HEAD) \
         --environment=prod
 ```
 
@@ -109,3 +113,7 @@ open pact-network.png
 ```
 
 ![Pact Network](pact-network.png "Pact Network")
+
+## Best practices:
+1. Consumer name should equal the repo name (This makes webhooks easier)
+2. Use the FULL git-sha (40 characters) for version numbers if you want to use the git status check api.
