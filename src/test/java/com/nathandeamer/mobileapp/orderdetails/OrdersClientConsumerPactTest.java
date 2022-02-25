@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(PactConsumerTestExt.class)
 @ExtendWith(SpringExtension.class)
-@PactTestFor(providerName = "orders", port = "8888")
+@PactTestFor(providerName = "pact-order", port = "8888")
 @SpringBootTest({
         "application.ordersUrl: localhost:8888/orders"
 })
