@@ -1,5 +1,13 @@
+# TODO: 
+- Get badges working
+- Webhooks
+
 # PACT Consumer example
- 
+
+[![Can I deploy mobileapp status](https://nathandeamer.pactflow.io/pacticipants/mobileapp/latest-version/main/can-i-deploy/to/dev/badge)](https://nathandeamer.pactflow.io/pacticipants/mobileapp/latest-version/main/can-i-deploy/to/dev)
+[![Can I deploy mobileapp status](https://nathandeamer.pactflow.io/pacticipants/mobileapp/latest-version/main/can-i-deploy/to/staging/badge)](https://nathandeamer.pactflow.io/pacticipants/mobileapp/latest-version/main/can-i-deploy/to/staging)
+[![Can I deploy mobileapp status](https://nathandeamer.pactflow.io/pacticipants/mobileapp/latest-version/main/can-i-deploy/to/prod/badge)](https://nathandeamer.pactflow.io/pacticipants/mobileapp/latest-version/main/can-i-deploy/to/prod)
+
 ### Setup:
 1. Get (and set) your PACT environment variables by clicking 'Copy Env Vars' for [Read/write token (CI)](https://[user].pactflow.io/settings/api-tokens).  
 (used in pact section of [build.gradle](build.gradle))
