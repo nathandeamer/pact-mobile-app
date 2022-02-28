@@ -118,7 +118,7 @@ pact-broker create-webhook \
   -X POST \
   -H "Content-Type: application/json" \
   -d '{ "state": "${pactbroker.githubVerificationStatus}", "description": "Pact Verification Tests ${pactbroker.providerVersionTags}", "context": "${pactbroker.providerName}", "target_url": "${pactbroker.verificationResultUrl}" }' \
-  --user nathandeamer:GITHUB_TOKEN \
+  --user nathandeamer:$GITHUB_TOKEN \
   --description "Publish pact verification status to Github" \
   --contract-published \
   --provider-verification-published
