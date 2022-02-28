@@ -2,7 +2,6 @@
 
 # TODO 
 - Badges (Do you need to use `--tag-with-git-branch`?)
-- Github webhooks (What permissions does your token need)
 
 ### Setup:
 1. Get (and set) your PACT environment variables by clicking 'Copy Env Vars' for [Read/write token (CI)](https://[user].pactflow.io/settings/api-tokens).  
@@ -113,6 +112,28 @@ open pact-network.png
 ```
 
 ![Pact Network](pact-network.png "Pact Network")
+
+## Github status check:  
+Using pact webhooks we can add a status check to a PR that would stop a PR from being merged if the pact has not been verified.
+1. Generate a github api token with permissions:  
+   https://github.com/settings/tokens -> Generate new token -> PACT
+
+2. Create webhook using the pact-cli:
+```pact-broker create-webhook \
+  'https://api.github.com/repos/nathandeamer/pact-mobile-app/statuses/${pactbroker.consumerVersionNumber}' \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -d '{ "state": "${pactbroker.githubVerificationStatus}", "description": "Pact Verification Tests ${pactbroker.providerVersionTags}", "context": "${pactbroker.providerName}", "target_url": "${pactbroker.verificationResultUrl}" }' \
+  --user nathandeamer:GITHUB_TOKEN \
+  --description "Publish pact verification status to Github" \
+  --contract-published \
+  --provider-verification-published \
+  --broker-base-url <your-broker>
+ ```
+
+## Slack webhooks:
+
+
 
 ## Best practices:
 1. Consumer name should equal the repo name (This makes webhooks easier)
