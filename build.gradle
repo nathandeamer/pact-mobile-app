@@ -22,6 +22,9 @@ dependencies {
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 	implementation "com.google.guava:guava:31.0.1-jre"
 
+	testImplementation 'com.github.tomakehurst:wiremock:2.27.2'
+	testImplementation 'com.atlassian.ta:wiremock-pact-generator:2.4.3'
+
 	testImplementation 'au.com.dius.pact.consumer:junit5:4.3.5'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
