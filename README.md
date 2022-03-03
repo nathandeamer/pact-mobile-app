@@ -2,7 +2,7 @@
 
 # TODO 
 - Badges (Do you need to use `--tag-with-git-branch`?)
-- Slack webhooks - make better template.
+- Slack webhooks - make better failed template.
 
 ### Setup:
 1. Get (and set) your PACT environment variables by clicking 'Copy Env Vars' for [Read/write token (CI)](https://[user].pactflow.io/settings/api-tokens).  
@@ -19,6 +19,7 @@ Remember to mark 'prod' as a Production environment when asked.
 ## Best practices:
 1. Consumer name should equal the repo name (This makes webhooks easier)
 2. Use the FULL git-sha (40 characters) for version numbers if you want to use the git status check api.
+3. What does a good consumer test look like: https://docs.pact.io/consumer/contract_tests_not_functional_tests/
 
 
 ### Run the consumer tests:
