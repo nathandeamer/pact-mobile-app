@@ -19,7 +19,7 @@ export PACT_BROKER_TOKEN=NotMyRealBrokerToken
 ![Pact Environments](pact-environments.png "Pact Environments")
 Remember to mark 'prod' as a Production environment when asked.
 3. Download the standalone [pact-cli](https://github.com/pact-foundation/pact-ruby-standalone/releases) and add to your $PATH `export PATH=$HOME/bin/pact/bin:$PATH`
-
+   or via [brew](https://github.com/pact-foundation/homebrew-pact-ruby-standalone)
 ## Best practices:
 1. Consumer name should equal the repo name - This makes webhooks easier
 2. Use the FULL git-sha (40 characters) for version numbers - for the github status check api
