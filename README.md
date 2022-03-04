@@ -39,7 +39,7 @@ This will publish the consumer pacts to pactflow with version: `<git sha>` and b
 ### Can I deploy
 Choose one of the following options:
 1. gradle: At time of writing the pact gradle canIDeploy task does not support branches and environments.
-2. pact-cli: `pact-broker can-i-deploy --pacticipant=pact-mobile-app --version=$(git rev-parse HEAD) --branch=$(git rev-parse --abbrev-ref HEAD) --to-environment=dev`  
+2. pact-cli: ```pact-broker can-i-deploy --pacticipant=$(basename `git rev-parse --show-toplevel`) --version=$(git rev-parse HEAD) --branch=$(git rev-parse --abbrev-ref HEAD) --to-environment=dev```  
 ** Remember to replace the `--to-environment` with the environment you want to check if you can deploy too.
 
 To get can-i-deploy to pass you'll need to follow the provider steps in [pact-order](https://github.com/nathandeamer/pact-order)
@@ -49,13 +49,13 @@ After `can-i-deploy` has passed and the service has been deployed to an environm
 
 Choose one of the following options:
 1. gradle: At time of writing the pact gradle plugin does not support recording a deployment
-2. pact-cli: `pact-broker record-deployment --pacticipant=pact-mobile-app --version=$(git rev-parse HEAD) --environment=dev`
+2. pact-cli: ```pact-broker record-deployment --pacticipant=$(basename `git rev-parse --show-toplevel`) --version=$(git rev-parse HEAD) --environment=dev```
 
 ![Pact Record Deployment](pact-record-deployment.png "Pact Record Deployment")
 
 ### Record a release
 When a version has been deployed to production we should record a release.
 1. gradle: At time of writing the pact gradle plugin does not support recording a release
-2. pact-cli: `pact-broker record-release --pacticipant=pact-mobile-app --version=$(git rev-parse HEAD) --environment=prod`
+2. pact-cli: ```pact-broker record-release --pacticipant=$(basename `git rev-parse --show-toplevel`) --version=$(git rev-parse HEAD) --environment=prod```
 
 ![Pact Record Release](pact-record-release.png "Pact Record Release")
