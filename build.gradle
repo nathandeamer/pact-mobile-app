@@ -77,7 +77,7 @@ pact {
 	publish {
 		consumerVersion = getGitHash()
 		consumerBranch = getGitBranch()
-		tags = [getGitBranch()]
+		//tags = [getGitBranch()]
 	}
 
 }
