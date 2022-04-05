@@ -51,7 +51,7 @@ public class OrdersClientConsumerPactTest {
                         .minArrayLike("items", 1)
                         .stringType("description", DESCRIPTION)
                         .integerType("qty", QUANTITY)
-                        .stringType("sku", SKU)
+                        //.stringType("sku", SKU)
                         .closeArray())
                 ).toPact(V4Pact.class);
     }
@@ -67,7 +67,7 @@ public class OrdersClientConsumerPactTest {
                                 .items(ImmutableList.of(OrdersResponse.Item.builder()
                                         .description(DESCRIPTION)
                                         .qty(QUANTITY)
-                                        .sku(SKU)
+                                        //.sku(SKU)
                                         .build()))
                                 .build());
     }
