@@ -14,3 +14,7 @@ pact-broker record-release --pacticipant=$(basename `git rev-parse --show-toplev
 ```shell
 pact-broker record-support-ended --pacticipant=$(basename `git rev-parse --show-toplevel`) --version=<git-sha-of-previous-release> --environment=prod
 ```
+
+Note: You would probably also use record-release if we need to support multiple versions of the same microservices in production (e.g. canary releases)
+
+https://docs.pact.io/pact_broker/recording_deployments_and_releases
