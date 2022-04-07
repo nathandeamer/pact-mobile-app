@@ -44,7 +44,7 @@ jobs: # a collection of steps
       - run:
           name: Can I deploy? # TODO: Start using environments.
           command: |
-            ./pact/bin/pact-broker can-i-deploy --pacticipant=$(basename `git rev-parse --show-toplevel`) --version=$(git rev-parse HEAD)
+            ./pact/bin/pact-broker can-i-deploy --pacticipant=$CIRCLE_PROJECT_REPONAME --version=$(git rev-parse HEAD)
       - save_cache:
           paths:
             - ~/.gradle/wrapper
