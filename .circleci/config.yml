@@ -1,0 +1,40 @@
+version: 2
+jobs: # a collection of steps
+  build:
+    environment:
+      _JAVA_OPTIONS: "-Xmx3g"
+      GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+    docker:
+      - image: cimg/openjdk:17.0.1 # ...with this image as the primary container; this is where all `steps` will run
+        auth:
+          username: nathandeamer
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+    steps: # a collection of executable commands
+      - checkout
+      - restore_cache:
+          key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+      - restore_cache:
+          key: v1-gradle-cache-{{ checksum "build.gradle" }}
+      - run:
+          name: Run tests
+          command: |
+            ./gradlew test
+      - save_cache:
+          paths:
+            - ~/.gradle/wrapper
+          key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+      - save_cache:
+          paths:
+            - ~/.gradle/caches
+          key: v1-gradle-cache-{{ checksum "build.gradle" }}
+      - store_test_results:
+          # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
+          path: build/test-results/test
+      - store_artifacts: # Upload test results for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
+          path: build/test-results/test
+          when: always
+workflows:
+  version: 2
+  workflow:
+    jobs:
+      - build
