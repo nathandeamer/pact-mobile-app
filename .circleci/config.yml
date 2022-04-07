@@ -16,13 +16,17 @@ jobs: # a collection of steps
       - restore_cache:
           key: v1-gradle-cache-{{ checksum "build.gradle" }}
       - run:
-          name: Run tests
+          name: Run tests #TODO: Exclude pact tests from unit tests
           command: |
-            ./gradlew clean test
+            ./gradlew test
       - run:
           name: Run Pact consumer tests
           command: |
-            ./gradlew clean test --tests "*ConsumerPactTest"
+            ./gradlew test --tests "*ConsumerPactTest"
+      - save_cache:
+          paths:
+            - ~/.gradle/wrapper
+          key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
       - save_cache:
           paths:
             - ~/.gradle/wrapper
@@ -36,6 +40,9 @@ jobs: # a collection of steps
           path: build/test-results/test
       - store_artifacts: # Upload test results for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
           path: build/test-results/test
+          when: always
+      - store_artifacts:
+          path: build/pact
           when: always
 workflows:
   version: 2
