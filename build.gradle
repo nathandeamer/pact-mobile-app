@@ -40,9 +40,10 @@ dependencyManagement {
 
 tasks.named('test') {
 	useJUnitPlatform()
-	filter{
-		excludeTestsMatching "*Pact*"
-	}
+}
+
+task pactConsumerTest( type: Test ) {
+	exclude '**/cucumber/**'
 }
 
 def getGitHash = { ->
