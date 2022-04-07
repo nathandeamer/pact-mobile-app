@@ -27,7 +27,7 @@ jobs: # a collection of steps
       - run:
           name: Run Consumer Pact tests
           command: |
-            ./gradlew pactTest --tests "*ConsumerPactTest"
+            ./gradlew pactTest --tests *ConsumerPactTest
       - run:
           name: Publish Consumer Pacts if they exist
           command: |
