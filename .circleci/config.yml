@@ -16,9 +16,22 @@ jobs: # a collection of steps
       - restore_cache:
           key: v1-gradle-cache-{{ checksum "build.gradle" }}
       - run:
-          name: Run tests (including PACT consumer tests)
+          name: Run tests
           command: |
-            ./gradlew clean test
+            ./gradlew test
+      - run:
+          name: Run Consumer Pact tests
+          command: |
+            ./gradlew pactTest --tests "*ConsumerPactTest"
+      - run:
+          name: Publish Consumer Pacts if they exist
+          command: |
+            if [ -d build/pacts ]
+            then
+              echo "Use pact-cli to publish the pacts"
+            else
+              echo "No Consumer Pacts found"
+            fi
       - save_cache:
           paths:
             - ~/.gradle/wrapper

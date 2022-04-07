@@ -2,7 +2,8 @@ plugins {
 	id 'org.springframework.boot' version '2.6.3'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
-	id 'au.com.dius.pact' version '4.3.5'
+	id 'au.com.dius.pact' version '4.3.6'
+	id 'org.unbroken-dome.test-sets' version '4.0.0'
 }
 
 group = 'com.nathandeamer'
@@ -25,7 +26,7 @@ dependencies {
 	testImplementation 'com.github.tomakehurst:wiremock:2.27.2'
 	testImplementation 'com.atlassian.ta:wiremock-pact-generator:2.4.3'
 
-	testImplementation 'au.com.dius.pact.consumer:junit5:4.3.5'
+	testImplementation 'au.com.dius.pact.consumer:junit5:4.3.6'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 	compileOnly 'org.projectlombok:lombok'
@@ -36,10 +37,6 @@ dependencyManagement {
 	imports {
 		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
 	}
-}
-
-tasks.named('test') {
-	useJUnitPlatform()
 }
 
 def getGitHash = { ->
@@ -66,6 +63,23 @@ static def getOrDefault(env, defaultVal) {
 		val = defaultVal
 	}
 	return val
+}
+
+testSets {
+	pactTest {
+		dirName = 'pact-test'
+	}
+}
+
+pactTest {
+	useJUnitPlatform()
+	filter {
+		setFailOnNoMatchingTests(false) // There won't always be consumer tests or provider tests
+	}
+}
+
+test {
+	useJUnitPlatform()
 }
 
 pact {
