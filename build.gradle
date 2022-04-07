@@ -42,10 +42,6 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-task pactConsumerTest( type: Test ) {
-	exclude '**/cucumber/**'
-}
-
 def getGitHash = { ->
 	def stdout = new ByteArrayOutputStream()
 	exec {

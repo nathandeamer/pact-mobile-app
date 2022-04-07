@@ -16,13 +16,9 @@ jobs: # a collection of steps
       - restore_cache:
           key: v1-gradle-cache-{{ checksum "build.gradle" }}
       - run:
-          name: Run tests #TODO: Exclude pact tests from unit tests
+          name: Run tests (including PACT consumer tests)
           command: |
-            ./gradlew test
-      - run:
-          name: Run Pact consumer tests
-          command: |
-            ./gradlew test --tests "*ConsumerPactTest"
+            ./gradlew clean test
       - save_cache:
           paths:
             - ~/.gradle/wrapper
