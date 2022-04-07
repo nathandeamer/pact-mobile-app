@@ -40,6 +40,9 @@ dependencyManagement {
 
 tasks.named('test') {
 	useJUnitPlatform()
+	filter{
+		excludeTestsMatching "*Pact*"
+	}
 }
 
 def getGitHash = { ->
