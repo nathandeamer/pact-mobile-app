@@ -33,7 +33,7 @@ jobs: # a collection of steps
           command: |
             if [ -d build/pacts ]
             then
-              echo "Use pact-cli to publish the pacts"
+              ./pact/bin/pact-broker publish build/pacts --consumer-app-version=$(git rev-parse HEAD) --branch=$(git rev-parse --abbrev-ref HEAD)
             else
               echo "No Consumer Pacts found"
             fi
