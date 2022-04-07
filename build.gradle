@@ -76,22 +76,28 @@ pactTest {
 	filter {
 		setFailOnNoMatchingTests(false) // There won't always be consumer tests or provider tests
 	}
+
+	if (System.getProperty('pactPublishResults') == 'true') {
+		systemProperty 'pact.provider.version', getGitHash()
+		systemProperty 'pact.provider.branch', getGitBranch()
+		systemProperty 'pact.verifier.publishResults', 'true'
+	}
 }
 
 test {
 	useJUnitPlatform()
 }
 
-pact {
-	broker {
-		pactBrokerUrl = getOrDefault("PACT_BROKER_BASE_URL", null)
-		pactBrokerToken = getOrDefault("PACT_BROKER_TOKEN", null)
-	}
-
-	publish {
-		consumerVersion = getGitHash()
-		consumerBranch = getGitBranch()
-		//tags = [getGitBranch()]
-	}
-
-}
+//pact {
+//	broker {
+//		pactBrokerUrl = getOrDefault("PACT_BROKER_BASE_URL", null)
+//		pactBrokerToken = getOrDefault("PACT_BROKER_TOKEN", null)
+//	}
+//
+//	publish {
+//		consumerVersion = getGitHash()
+//		consumerBranch = getGitBranch()
+//		//tags = [getGitBranch()]
+//	}
+//
+//}

@@ -29,14 +29,22 @@ jobs: # a collection of steps
           command: |
             ./gradlew pactTest --tests *ConsumerPactTest
       - run:
-          name: Publish Consumer Pacts if they exist
+          name: Publish Consumer Pacts
           command: |
             if [ -d build/pacts ]
             then
               ./pact/bin/pact-broker publish build/pacts --consumer-app-version=$(git rev-parse HEAD) --branch=$(git rev-parse --abbrev-ref HEAD)
             else
-              echo "No Consumer Pacts found"
+              echo "No Consumer Pacts found. Continuing...."
             fi
+      - run:
+          name: Run Provider Pact tests # Remember: A microservice can be a consumer and a provider. # Always publish the results from pipeline
+          command: |
+            ./gradlew pactTest -DpactPublishResults=true --tests *ProviderPactTest
+      - run:
+          name: Can I deploy? # TODO: Start using environments.
+          command: |
+            ./pact/bin/pact-broker can-i-deploy --pacticipant=$(basename `git rev-parse --show-toplevel`) --version=$(git rev-parse HEAD)
       - save_cache:
           paths:
             - ~/.gradle/wrapper
