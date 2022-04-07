@@ -42,7 +42,7 @@ jobs: # a collection of steps
           path: build/test-results/test
           when: always
       - store_artifacts:
-          path: build/pact
+          path: build/pacts
           when: always
 workflows:
   version: 2
