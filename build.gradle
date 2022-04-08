@@ -87,17 +87,3 @@ pactTest {
 test {
 	useJUnitPlatform()
 }
-
-//pact {
-//	broker {
-//		pactBrokerUrl = getOrDefault("PACT_BROKER_BASE_URL", null)
-//		pactBrokerToken = getOrDefault("PACT_BROKER_TOKEN", null)
-//	}
-//
-//	publish {
-//		consumerVersion = getGitHash()
-//		consumerBranch = getGitBranch()
-//		//tags = [getGitBranch()]
-//	}
-//
-//}
