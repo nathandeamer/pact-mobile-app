@@ -1,4 +1,18 @@
-version: 2
+# TODO:
+# 1. Run Provider Pact tests: For the pact-webhook flow we ONLY need to run the pact-provider tests step - this should really be done with conditional workflows - I've just been lazy.
+# 2. Can-I-Depploy: Use pact environments.
+version: 2.1
+parameters:
+  pact-webhook:
+    type: boolean
+    default: false
+  pact-consumer-name:
+    type: string
+    default: "default"
+  pact-url:
+    type: string
+    default: "default"
+
 jobs: # a collection of steps
   build:
     environment:
@@ -33,16 +47,21 @@ jobs: # a collection of steps
           command: |
             if [ -d build/pacts ]
             then
-              ./pact/bin/pact-broker publish build/pacts --consumer-app-version=$CIRCLE_SHA1 --branch=$CIRCLE_BRANCH
+              ./pact/bin/pact-broker publish build/pacts --consumer-app-version=$CIRCLE_SHA1 --branch=$CIRCLE_BRANCH --tag-with-git-branch
             else
               echo "No Consumer Pacts found. Continuing...."
             fi
       - run:
           name: Run Provider Pact tests # Remember: A microservice can be a consumer and a provider. # Always publish the results from pipeline
           command: |
-            ./gradlew pactTest -DpactPublishResults=true --tests *ProviderPactTest
+            if << pipeline.parameters.pact-webhook >>
+            then
+              ./gradlew pactTest -DpactPublishResults=true -Dpact.filter.consumers=<< pipeline.parameters.pact-consumer-name >> -Dpact.filter.pacturl=<< pipeline.parameters.pact-url >> --tests *ProviderPactTest
+            else
+              ./gradlew pactTest -DpactPublishResults=true --tests *ProviderPactTest
+            fi
       - run:
-          name: Can I deploy? # TODO: Start using environments.
+          name: Can I deploy?
           command: |
             ./pact/bin/pact-broker can-i-deploy --pacticipant=$CIRCLE_PROJECT_REPONAME --version=$CIRCLE_SHA1
       - save_cache:
@@ -62,10 +81,8 @@ jobs: # a collection of steps
           path: build/test-results/test
       - store_artifacts: # Upload test results for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
           path: build/test-results/test
-          when: always
       - store_artifacts:
           path: build/pacts
-          when: always
 workflows:
   version: 2
   workflow:
