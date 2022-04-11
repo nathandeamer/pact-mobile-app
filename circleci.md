@@ -7,4 +7,5 @@ pact-broker create-webhook \
   -d '{"parameters":{"pact-webhook":true,"pact-consumer-name":"${pactbroker.consumerName}","pact-url":"${pactbroker.pactUrl}"}}' \
   --description "VERIFICATION REQUIRED - Trigger Provider circle build" \
   --contract-requiring-verification-published
+  --contract-published
  ```
