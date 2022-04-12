@@ -1,6 +1,3 @@
-# TODO:
-# 1. Run Provider Pact tests: For the pact-webhook flow we ONLY need to run the pact-provider tests step - this should really be done with conditional workflows - I've just been lazy.
-# 2. Can-I-Depploy: Use pact environments.
 version: 2.1
 parameters:
   pact-webhook:
@@ -13,27 +10,40 @@ parameters:
     type: string
     default: "default"
 
-jobs: # a collection of steps
-  build:
-    environment:
-      _JAVA_OPTIONS: "-Xmx3g"
-      GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+executors:
+  docker:
     docker:
-      - image: cimg/openjdk:17.0.1 # ...with this image as the primary container; this is where all `steps` will run
+      - image: cimg/openjdk:17.0.1
         auth:
           username: nathandeamer
-          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
-    steps: # a collection of executable commands
-      - checkout
-      - restore_cache:
-          key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
-      - restore_cache:
-          key: v1-gradle-cache-{{ checksum "build.gradle" }}
+          password: $DOCKERHUB_PASSWORD
+
+jobs:
+  download-pact-cli: # Usually I would include this in my base docker image
+    executor: docker
+    steps:
       - run:
           name: "Download pact-cli"
           command: |
             curl -LO https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v1.88.83/pact-1.88.83-linux-x86_64.tar.gz
             tar xzf pact-1.88.83-linux-x86_64.tar.gz
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/pact
+  build:
+    executor: docker
+    environment:
+      _JAVA_OPTIONS: "-Xmx3g"
+      GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+    steps:
+      - checkout
+      - attach_workspace: # Attached the pact cli to this job.
+          at: /home/circleci/project
+      - restore_cache:
+          key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+      - restore_cache:
+          key: v1-gradle-cache-{{ checksum "build.gradle" }}
       - run:
           name: Run tests
           command: |
@@ -54,16 +64,7 @@ jobs: # a collection of steps
       - run:
           name: Run Provider Pact tests # Remember: A microservice can be a consumer and a provider. # Always publish the results from pipeline
           command: |
-            if << pipeline.parameters.pact-webhook >>
-            then
-              ./gradlew pactTest -DpactPublishResults=true -Dpact.filter.consumers=<< pipeline.parameters.pact-consumer-name >> -Dpact.filter.pacturl=<< pipeline.parameters.pact-url >> --tests *ProviderPactTest
-            else
               ./gradlew pactTest -DpactPublishResults=true --tests *ProviderPactTest
-            fi
-      - run:
-          name: Can I deploy?
-          command: |
-            ./pact/bin/pact-broker can-i-deploy --pacticipant=$CIRCLE_PROJECT_REPONAME --version=$CIRCLE_SHA1
       - save_cache:
           paths:
             - ~/.gradle/wrapper
@@ -83,8 +84,116 @@ jobs: # a collection of steps
           path: build/test-results/test
       - store_artifacts:
           path: build/pacts
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project
+
+  build-pact-provider-only:
+    executor: docker
+    environment:
+      _JAVA_OPTIONS: "-Xmx3g"
+      GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+    steps:
+      - checkout
+      - attach_workspace: # Attached the pact cli to this job.
+          at: /home/circleci/project
+      - restore_cache:
+          key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+      - restore_cache:
+          key: v1-gradle-cache-{{ checksum "build.gradle" }}
+      - run:
+          name: Run Provider Pact tests # Remember: A microservice can be a consumer and a provider. # Always publish the results from pipeline
+          command: |
+              ./gradlew pactTest -DpactPublishResults=true -Dpact.filter.consumers=<< pipeline.parameters.pact-consumer-name >> -Dpact.filter.pacturl=<< pipeline.parameters.pact-url >> --tests *ProviderPactTest
+
+  can-i-deploy:
+    executor: docker
+    steps:
+      - attach_workspace: # Attached the pact cli to this job.
+          at: ~/
+      - run:
+          name: Can I deploy?
+          command: |
+            ./pact/bin/pact-broker can-i-deploy --pacticipant=$CIRCLE_PROJECT_REPONAME --version=$CIRCLE_SHA1
+  deploy-to-dev:
+    executor: docker
+    steps:
+      - attach_workspace: # Attached the pact cli to this job.
+          at: ~/
+      - run:
+          name: Can I deploy to dev?
+          command: |
+            ./pact/bin/pact-broker can-i-deploy --pacticipant=$CIRCLE_PROJECT_REPONAME --version=$CIRCLE_SHA1 --to-environment=dev
+      - run:
+          name: Deploy to dev
+          command: |
+            echo "Simulating deploying to dev environment"
+            ./pact/bin/pact-broker record-deployment --pacticipant=$CIRCLE_PROJECT_REPONAME --version=$CIRCLE_SHA1 --environment=dev
+  deploy-to-staging:
+    executor: docker
+    steps:
+      - attach_workspace: # Attached the pact cli to this job.
+          at: ~/
+      - run:
+          name: Can I deploy to staging?
+          command: |
+            ./pact/bin/pact-broker can-i-deploy --pacticipant=$CIRCLE_PROJECT_REPONAME --version=$CIRCLE_SHA1 --to-environment=staging
+      - run:
+          name: Deploy to staging
+          command: |
+            echo "Simulating deploying to dev environment"
+            ./pact/bin/pact-broker record-deployment --pacticipant=$CIRCLE_PROJECT_REPONAME --version=$CIRCLE_SHA1 --environment=staging
+  deploy-to-prod:
+    executor: docker
+    steps:
+      - attach_workspace: # Attached the pact cli to this job.
+          at: ~/
+      - run:
+          name: Can I deploy to prod?
+          command: |
+            ./pact/bin/pact-broker can-i-deploy --pacticipant=$CIRCLE_PROJECT_REPONAME --version=$CIRCLE_SHA1 --to-environment=prod
+      - run:
+          name: Deploy to staging
+          command: |
+            echo "Simulating deploying to prod environment"
+            ./pact/bin/pact-broker record-deployment --pacticipant=$CIRCLE_PROJECT_REPONAME --version=$CIRCLE_SHA1 --environment=prod
 workflows:
   version: 2
-  workflow:
+
+  pact-provider-webhook-workflow:
+    when: << pipeline.parameters.pact-webhook >>
     jobs:
-      - build
+      - download-pact-cli
+      - build-pact-provider-only:
+          requires:
+            - download-pact-cli
+
+  main-workflow:
+    when:
+      not: << pipeline.parameters.pact-webhook >>
+    jobs:
+      - download-pact-cli
+      - build:
+          requires:
+            - download-pact-cli
+      - can-i-deploy:
+          requires:
+            - build
+      - deploy-to-dev:
+          requires:
+            - can-i-deploy
+      - approval-deploy-to-staging:
+          type: approval
+          requires:
+            - deploy-to-dev
+      - deploy-to-staging:
+          requires:
+            - approval-deploy-to-staging
+      - approval-deploy-to-prod:
+          type: approval
+          requires:
+            - deploy-to-staging
+      - deploy-to-prod:
+          requires:
+            - approval-deploy-to-prod
