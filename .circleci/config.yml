@@ -18,19 +18,17 @@ executors:
           username: nathandeamer
           password: $DOCKERHUB_PASSWORD
 
-jobs:
-  download-pact-cli: # Usually I would include this in my base docker image
-    executor: docker
+commands:
+  download-pact-cli:
+    description: "Download pact"
     steps:
       - run:
-          name: "Download pact-cli"
+          name: Download pact cli
           command: |
             curl -LO https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v1.88.83/pact-1.88.83-linux-x86_64.tar.gz
             tar xzf pact-1.88.83-linux-x86_64.tar.gz
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - project/pact
+
+jobs:
   build:
     executor: docker
     environment:
@@ -38,8 +36,6 @@ jobs:
       GRADLE_OPTS: "-Dorg.gradle.daemon=false"
     steps:
       - checkout
-      - attach_workspace: # Attached the pact cli to this job.
-          at: /home/circleci/project
       - restore_cache:
           key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
       - restore_cache:
@@ -52,6 +48,7 @@ jobs:
           name: Run Consumer Pact tests
           command: |
             ./gradlew pactTest --tests *ConsumerPactTest
+      - download-pact-cli
       - run:
           name: Publish Consumer Pacts
           command: |
@@ -84,10 +81,6 @@ jobs:
           path: build/test-results/test
       - store_artifacts:
           path: build/pacts
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - project
 
   build-pact-provider-only:
     executor: docker
@@ -96,8 +89,7 @@ jobs:
       GRADLE_OPTS: "-Dorg.gradle.daemon=false"
     steps:
       - checkout
-      - attach_workspace: # Attached the pact cli to this job.
-          at: /home/circleci/project
+      - download-pact-cli
       - restore_cache:
           key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
       - restore_cache:
@@ -110,8 +102,7 @@ jobs:
   can-i-deploy:
     executor: docker
     steps:
-      - attach_workspace: # Attached the pact cli to this job.
-          at: ~/
+      - download-pact-cli
       - run:
           name: Can I deploy?
           command: |
@@ -119,8 +110,7 @@ jobs:
   deploy-to-dev:
     executor: docker
     steps:
-      - attach_workspace: # Attached the pact cli to this job.
-          at: ~/
+      - download-pact-cli
       - run:
           name: Can I deploy to dev?
           command: |
@@ -133,8 +123,7 @@ jobs:
   deploy-to-staging:
     executor: docker
     steps:
-      - attach_workspace: # Attached the pact cli to this job.
-          at: ~/
+      - download-pact-cli
       - run:
           name: Can I deploy to staging?
           command: |
@@ -147,8 +136,7 @@ jobs:
   deploy-to-prod:
     executor: docker
     steps:
-      - attach_workspace: # Attached the pact cli to this job.
-          at: ~/
+      - download-pact-cli
       - run:
           name: Can I deploy to prod?
           command: |
@@ -164,19 +152,13 @@ workflows:
   pact-provider-webhook-workflow:
     when: << pipeline.parameters.pact-webhook >>
     jobs:
-      - download-pact-cli
-      - build-pact-provider-only:
-          requires:
-            - download-pact-cli
+      - build-pact-provider-only
 
   main-workflow:
     when:
       not: << pipeline.parameters.pact-webhook >>
     jobs:
-      - download-pact-cli
-      - build:
-          requires:
-            - download-pact-cli
+      - build
       - can-i-deploy:
           requires:
             - build
