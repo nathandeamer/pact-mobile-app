@@ -120,6 +120,7 @@ jobs:
   deploy-to-dev:
     executor: docker
     steps:
+      - download-pact-cli
       - run:
           name: Deploy to dev
           command: |
@@ -138,6 +139,7 @@ jobs:
   deploy-to-staging:
     executor: docker
     steps:
+      - download-pact-cli
       - run:
           name: Deploy to staging
           command: |
@@ -156,6 +158,7 @@ jobs:
   deploy-to-prod:
     executor: docker
     steps:
+      - download-pact-cli
       - run:
           name: Deploy to prod
           command: |
