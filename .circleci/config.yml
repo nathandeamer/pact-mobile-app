@@ -55,7 +55,7 @@ jobs:
           command: |
             if [ -d build/pacts ]
             then
-              ./pact/bin/pact-broker publish build/pacts --consumer-app-version=$CIRCLE_SHA1 --branch=$CIRCLE_BRANCH --tag-with-git-branch
+              ./pact/bin/pact-broker publish build/pacts --consumer-app-version=$CIRCLE_SHA1 --branch=$CIRCLE_BRANCH --tag-with-git-branch --build-url=$CIRCLE_BUILD_URL
             else
               echo "No Consumer Pacts found. Continuing...."
             fi
