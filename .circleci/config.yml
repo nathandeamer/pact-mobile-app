@@ -107,7 +107,8 @@ jobs:
           name: Can I deploy?
           command: |
             ./pact/bin/pact-broker can-i-deploy --pacticipant=$CIRCLE_PROJECT_REPONAME --version=$CIRCLE_SHA1
-  deploy-to-dev:
+
+  can-i-deploy-dev:
     executor: docker
     steps:
       - download-pact-cli
@@ -115,12 +116,17 @@ jobs:
           name: Can I deploy to dev?
           command: |
             ./pact/bin/pact-broker can-i-deploy --pacticipant=$CIRCLE_PROJECT_REPONAME --version=$CIRCLE_SHA1 --to-environment=dev
+
+  deploy-to-dev:
+    executor: docker
+    steps:
       - run:
           name: Deploy to dev
           command: |
             echo "Simulating deploying to dev environment"
             ./pact/bin/pact-broker record-deployment --pacticipant=$CIRCLE_PROJECT_REPONAME --version=$CIRCLE_SHA1 --environment=dev
-  deploy-to-staging:
+
+  can-i-deploy-staging:
     executor: docker
     steps:
       - download-pact-cli
@@ -128,12 +134,17 @@ jobs:
           name: Can I deploy to staging?
           command: |
             ./pact/bin/pact-broker can-i-deploy --pacticipant=$CIRCLE_PROJECT_REPONAME --version=$CIRCLE_SHA1 --to-environment=staging
+
+  deploy-to-staging:
+    executor: docker
+    steps:
       - run:
           name: Deploy to staging
           command: |
             echo "Simulating deploying to dev environment"
             ./pact/bin/pact-broker record-deployment --pacticipant=$CIRCLE_PROJECT_REPONAME --version=$CIRCLE_SHA1 --environment=staging
-  deploy-to-prod:
+
+  can-i-deploy-prod:
     executor: docker
     steps:
       - download-pact-cli
@@ -141,11 +152,16 @@ jobs:
           name: Can I deploy to prod?
           command: |
             ./pact/bin/pact-broker can-i-deploy --pacticipant=$CIRCLE_PROJECT_REPONAME --version=$CIRCLE_SHA1 --to-environment=prod
+
+  deploy-to-prod:
+    executor: docker
+    steps:
       - run:
-          name: Deploy to staging
+          name: Deploy to prod
           command: |
             echo "Simulating deploying to prod environment"
             ./pact/bin/pact-broker record-deployment --pacticipant=$CIRCLE_PROJECT_REPONAME --version=$CIRCLE_SHA1 --environment=prod
+
 workflows:
   version: 2
 
@@ -162,20 +178,57 @@ workflows:
       - can-i-deploy:
           requires:
             - build
-      - deploy-to-dev:
+      - can-i-deploy-dev:
           requires:
             - can-i-deploy
+      - deploy-to-dev:
+          requires:
+            - can-i-deploy-dev
+          filters:
+            branches:
+              only:
+                - main
       - approval-deploy-to-staging:
           type: approval
           requires:
             - deploy-to-dev
-      - deploy-to-staging:
+          filters:
+            branches:
+              only:
+                - main
+      - can-i-deploy-staging:
           requires:
             - approval-deploy-to-staging
+          filters:
+            branches:
+              only:
+                - main
+      - deploy-to-staging:
+          requires:
+            - can-i-deploy-staging
+          filters:
+            branches:
+              only:
+                - main
       - approval-deploy-to-prod:
           type: approval
           requires:
             - deploy-to-staging
-      - deploy-to-prod:
+          filters:
+            branches:
+              only:
+                - main
+      - can-i-deploy-prod:
           requires:
             - approval-deploy-to-prod
+          filters:
+            branches:
+              only:
+                - main
+      - deploy-to-prod:
+          requires:
+            - can-i-deploy-prod
+          filters:
+            branches:
+              only:
+                - main
