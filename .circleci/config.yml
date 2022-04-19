@@ -121,7 +121,7 @@ jobs:
           command: |
             curl -f -X POST 'https://circleci.com/api/v2/project/github/nathandeamer/<< pipeline.parameters.pact-consumer-name >>/pipeline' \
               -H 'Content-Type: application/json' \
-              -H 'circle-token: '${CIRCLE_TOKEN}
+              -H 'circle-token: '${CIRCLE_TOKEN} \
               --data '{"branch": "<< pipeline.parameters.pact-consumer-branch >>"}'
   can-i-deploy:
     executor: docker
