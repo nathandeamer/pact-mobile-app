@@ -1,4 +1,4 @@
-# TODO: This pipeline needs a clean up.  Duplicated code / steps. Lots of downloading the pact-cli
+# TODO: This pipeline needs a clean up.  Duplicated code / steps. Lots of downloading the pact-cli.
 version: 2.1
 parameters:
   pact-webhook:
@@ -7,7 +7,14 @@ parameters:
   pact-consumer-name:
     type: string
     default: "default"
+  pact-consumer-branch:
+    type: string
+    default: "main"
   pact-url:
+    type: string
+    default: "default"
+  pact-build-url:
+    description: The URL of the consumer build that have triggered the provider.
     type: string
     default: "default"
 
@@ -51,7 +58,7 @@ jobs:
             ./gradlew pactTest --tests *ConsumerPactTest
       - download-pact-cli
       - run:
-          name: Publish Consumer Pacts # We need the workflow id for providers
+          name: Publish Consumer Pacts
           command: |
             if [ -d build/pacts ]
             then
@@ -62,7 +69,7 @@ jobs:
       - run:
           name: Run Provider Pact tests # Remember: A microservice can be a consumer and a provider. # Always publish the results from pipeline
           command: |
-              ./gradlew pactTest -DpactPublishResults=true --tests *ProviderPactTest
+            ./gradlew pactTest -DpactPublishResults=true --tests *ProviderPactTest
       - save_cache:
           paths:
             - ~/.gradle/wrapper
@@ -89,6 +96,14 @@ jobs:
       _JAVA_OPTIONS: "-Xmx3g"
       GRADLE_OPTS: "-Dorg.gradle.daemon=false"
     steps:
+      - run:
+          name: (DEBUG) Echo pipeline params
+          command: |
+            echo "pact-webhook: << pipeline.parameters.pact-webhook >>"
+            echo "pact-consumer-name: << pipeline.parameters.pact-consumer-name >>"
+            echo "pact-consumer-branch: << pipeline.parameters.pact-consumer-branch >>"
+            echo "pact-url: << pipeline.parameters.pact-url >>"
+            echo "pact-build-url: << pipeline.parameters.pact-build-url >>"
       - checkout
       - download-pact-cli
       - restore_cache:
@@ -98,8 +113,16 @@ jobs:
       - run:
           name: Run Provider Pact tests # Remember: A microservice can be a consumer and a provider. # Always publish the results from pipeline
           command: |
-              ./gradlew pactTest -DpactPublishResults=true -Dpact.filter.consumers=<< pipeline.parameters.pact-consumer-name >> -Dpact.filter.pacturl=<< pipeline.parameters.pact-url >> --tests *ProviderPactTest
-
+            ./gradlew pactTest -DpactPublishResults=true -Dpact.filter.consumers=<< pipeline.parameters.pact-consumer-name >> -Dpact.filter.pacturl=<< pipeline.parameters.pact-url >> --tests *ProviderPactTest
+      - run:
+          # Could be smarter here and use workflow id from the pact-build-url and the re-run workflow API: https://circleci.com/docs/api/v2/#operation/rerunWorkflow.
+          # If we wanted to be super smart there might be a way of putting an approval step (waiting for pact provider) and then approve the job from the provider flow.
+          name: Trigger consumer workflow   # Now that the provider has verified the pacts - re-run the workflow for the branch.
+          command: |
+            curl -f -X POST 'https://circleci.com/api/v2/project/github/nathandeamer/<< pipeline.parameters.pact-consumer-name >>/pipeline' \
+              -H 'Content-Type: application/json' \
+              -H 'circle-token: '${CIRCLE_TOKEN}
+              --data '{"branch": "<< pipeline.parameters.pact-consumer-branch >>"}'
   can-i-deploy:
     executor: docker
     steps:
