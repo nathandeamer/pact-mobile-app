@@ -51,11 +51,11 @@ jobs:
             ./gradlew pactTest --tests *ConsumerPactTest
       - download-pact-cli
       - run:
-          name: Publish Consumer Pacts
+          name: Publish Consumer Pacts # We need the workflow id for providers
           command: |
             if [ -d build/pacts ]
             then
-              ./pact/bin/pact-broker publish build/pacts --consumer-app-version=$CIRCLE_SHA1 --branch=$CIRCLE_BRANCH --tag-with-git-branch --build-url=$CIRCLE_BUILD_URL
+              ./pact/bin/pact-broker publish build/pacts --consumer-app-version=$CIRCLE_SHA1 --branch=$CIRCLE_BRANCH --tag-with-git-branch --build-url=$CIRCLE_BUILD_URL/workflows/$CIRCLE_WORKFLOW_ID
             else
               echo "No Consumer Pacts found. Continuing...."
             fi
