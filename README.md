@@ -26,7 +26,7 @@ Remember to mark 'prod' as a Production environment when asked.
 
 
 ### Run the consumer tests:
-1. `./gradlew clean test --tests "*ConsumerPactTest"`  
+1. `./gradlew clean pactTest --tests "*ConsumerPactTest"`  
 See generated contracts in [build/pacts](build/pacts)
 
 ### Publish the consumer tests to the broker
