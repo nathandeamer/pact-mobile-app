@@ -205,7 +205,7 @@ workflows:
       - build
       - can-i-deploy-dev:
           requires:
-            - can-i-deploy
+            - build
       - deploy-to-dev:
           requires:
             - can-i-deploy-dev
