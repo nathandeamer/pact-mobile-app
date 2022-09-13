@@ -1,3 +1,2 @@
 application:
   ordersUrl: http://localhost:8081/orders
-  customersUrl: http://localhost:8082/orders
