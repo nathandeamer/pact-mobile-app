@@ -203,6 +203,9 @@ workflows:
       not: << pipeline.parameters.pact-webhook >>
     jobs:
       - build
+      - can-i-deploy:
+          requires:
+            - build
       - can-i-deploy-dev:
           requires:
             - can-i-deploy
