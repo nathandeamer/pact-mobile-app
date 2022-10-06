@@ -11,7 +11,6 @@ import java.util.List;
 public class OrdersResponse {
 
   private int id;
-  private String name;
   private List<Item> items;
 
   @Data
