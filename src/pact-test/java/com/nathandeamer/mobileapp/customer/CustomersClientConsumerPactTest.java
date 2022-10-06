@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Objects;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -26,7 +27,7 @@ public class CustomersClientConsumerPactTest {
 
     private static final String CONSUMER_NAME = "pact-mobile-app";
 
-    private static final int CUSTOMER_ID = 666;
+    private static final UUID CUSTOMER_ID = UUID.randomUUID();
     private static final String FIRST_NAME = "Nathan";
     private static final String LAST_NAME = "Deamer";
 
@@ -44,7 +45,7 @@ public class CustomersClientConsumerPactTest {
                 .willRespondWith()
                 .status(200)
                 .body(Objects.requireNonNull(new PactDslJsonBody()
-                        .integerType("id", CUSTOMER_ID)
+                        .uuid("id", CUSTOMER_ID)
                         .stringType("firstName", FIRST_NAME)
                         .stringType("lastName", LAST_NAME))
                 ).toPact(V4Pact.class);
