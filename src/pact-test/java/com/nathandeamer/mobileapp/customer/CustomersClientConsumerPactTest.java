@@ -30,6 +30,7 @@ public class CustomersClientConsumerPactTest {
     private static final UUID CUSTOMER_ID = UUID.randomUUID();
     private static final String FIRST_NAME = "Nathan";
     private static final String LAST_NAME = "Deamer";
+    public static final String ADDRESS = "123 Legend street";
 
     @Autowired
     private CustomersClient customersClient;
@@ -45,10 +46,10 @@ public class CustomersClientConsumerPactTest {
                 .willRespondWith()
                 .status(200)
                 .body(Objects.requireNonNull(new PactDslJsonBody()
-                        .uuid("id", CUSTOMER_ID)
-                        .stringType("firstName", FIRST_NAME)
-                        .stringType("lastName", LAST_NAME)
-                                .stringType("address", "123 Legend street")
+                                .uuid("id", CUSTOMER_ID)
+                                .stringType("firstName", FIRST_NAME)
+                                .stringType("lastName", LAST_NAME)
+                                .stringType("address", ADDRESS)
                         )
                 ).toPact(V4Pact.class);
     }
@@ -63,6 +64,7 @@ public class CustomersClientConsumerPactTest {
                                 .id(CUSTOMER_ID)
                                 .firstName(FIRST_NAME)
                                 .lastName(LAST_NAME)
+                                .address(ADDRESS)
                                 .build());
     }
 
