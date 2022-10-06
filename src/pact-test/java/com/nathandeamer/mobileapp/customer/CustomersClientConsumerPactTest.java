@@ -47,7 +47,9 @@ public class CustomersClientConsumerPactTest {
                 .body(Objects.requireNonNull(new PactDslJsonBody()
                         .uuid("id", CUSTOMER_ID)
                         .stringType("firstName", FIRST_NAME)
-                        .stringType("lastName", LAST_NAME))
+                        .stringType("lastName", LAST_NAME)
+                                .stringType("address", "123 Legend street")
+                        )
                 ).toPact(V4Pact.class);
     }
 
